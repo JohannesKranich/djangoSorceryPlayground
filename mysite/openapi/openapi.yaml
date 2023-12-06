@@ -1,0 +1,152 @@
+openapi: "3.0.0"
+
+info:
+  title: Test Schema
+  description: API to illustrate OpenAlchemy MVP.
+  version: "0.1"
+
+paths:
+  /employee:
+    get:
+      operationId: api.EmployeeView.get
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+  /employee/create:
+    get:
+      operationId: api.EmployeeView.create
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    post:
+      operationId: api.EmployeeView.new_post
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+  /task:
+    get:
+      operationId: api.TaskView.get
+      summary: Used to retrieve all tasks.
+      responses:
+        200:
+          description: Return all tasks from the database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+  /task/create:
+    get:
+      operationId: api.TaskView.create
+      summary: Used to retrieve all Tasks.
+      responses:
+        200:
+          description: Return all Tasks from the database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+    post:
+      operationId: api.TaskView.new_post
+      summary: Used to retrieve all Tasks.
+      responses:
+        200:
+          description: Return all Tasks from the database.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+components:
+  schemas:
+    Employee:
+      description: Person that works for a company.
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the employee.
+          example: 0
+          x-primary-key: true
+          x-autoincrement: true
+        name:
+          type: string
+          description: The name of the employee.
+          example: David Andersson
+          x-index: true
+        division:
+          type: string
+          description: The part of the company the employee works in.
+          example: Engineering
+          x-index: true
+        salary:
+          type: number
+          description: The amount of money the employee is paid.
+          example: 1000000.00
+          x-index: true
+
+      required:
+        - name
+        - division
+        - salary
+
+    Task:
+      description: A task that can be assigned to employees.
+      type: object
+      x-tablename: task
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the task.
+          example: 0
+          x-primary-key: true
+          x-autoincrement: true
+        title:
+          type: string
+          description: The title of the task.
+          example: Complete Project X
+          x-index: true
+        description:
+          type: string
+          description: The description of the task.
+          example: Finish all tasks related to Project X.
+        employees:
+          type: array
+          description: List of employees associated with the task.
+          items:
+            allOf:
+              - "$ref": "#/components/schemas/Employee"
+              - x-secondary: employee_task
+
+      required:
+        - title
+    EmployeeTask:
+      type: object
+      x-tablename: employee_task
+      properties:
+        employee_id:
+          type: integer
+          x-primary-key: true
+          x-foreign-key: employee.id
+        task_id:
+          type: integer
+          x-primary-key: true
+          x-foreign-key: task.id
+      required:
+        - employee_id
+        - task_id
